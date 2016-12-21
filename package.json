@@ -1,6 +1,6 @@
 {
   "name": "fastping",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Find the fastest server by mean ping time",
   "main": "index.js",
   "scripts": {
