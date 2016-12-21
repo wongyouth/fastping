@@ -1,7 +1,22 @@
-## Find the fastest node from candidates by ping time
+# fastping
+
+A tool to find the fastest node from candidates by ping time
 
 List all nodes in a file line by line, and `fastping` will ping every node 3 times to get a mean ping time.
 After all nodes have pinged. fastping will give you the fastest node and the mean ping time of it.
+
+# Usage
+
+    Usage: fastping -f [file] [options]
+
+    Options:
+      -f, --file  Nodes file to load                                      [required]
+      -n          Number of requests to perform                         [default: 3]
+      -c          Concurrency, number of multiple requests to make at a time
+                                                                        [default: 0]
+      -h, --help  Show help                                                [boolean]
+
+# Example
 
 The way you are supposed to use it looks like below:
 
@@ -22,5 +37,6 @@ The way you are supposed to use it looks like below:
     cat 220.194.79.12  >> nodes
 
     fastping -f nodes
+
 
 I find it's useful to find the best one from a list of VPN server candidates.

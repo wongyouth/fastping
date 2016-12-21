@@ -3,7 +3,17 @@ const _       = require('lodash')
 const chalk   = require('chalk')
 const Promise = require('bluebird')
 const exec    = Promise.promisify(require('child_process').exec)
-const argv    = require('minimist')(process.argv.slice(1))
+const argv    = require('yargs')
+  .usage('Usage: $0 -f [file] [options]')
+  .demand(['f'])
+  .alias('f', 'file')
+  .describe('f', 'Nodes file to load')
+  .describe('n', 'Number of requests to perform')
+  .describe('c', 'Concurrency, number of multiple requests to make at a time')
+  .default({n: 3, c: 0})
+  .help('h')
+  .alias('h', 'help')
+  .argv
 
 // get server list
 // $('td').map((_, x) => /talkcute.com/.test(x.textContent) ? x.textContent.trim() : null).get()
@@ -13,8 +23,8 @@ const readNodesFromFile = file =>
   fs.readFileSync(file).toString().split('\n').filter(x => /.com/.test(x))
 
 // s => Promise(i)
-const getPingTime = async node => {
-  let output = await exec(`ping -c 3 ${node}`)
+const getPingTime = async ({node, count}) => {
+  let output = await exec(`ping -c ${count} ${node}`)
   // console.log(output)
   let times = output
     .split("\n")
@@ -29,23 +39,12 @@ const red = o => chalk.red(o.toString())
 // s => s
 const green = o => chalk.green(o.toString())
 
-function checkArguments () {
-  let file = argv['f']
-
-  if (!file || !fs.existsSync(file)) {
-    console.log('Usage: fastping -f file')
-    process.exit(1)
-  }
-}
-
 function main () {
-  checkArguments()
-
   let nodeTimes = []
 
-  Promise.map(readNodesFromFile(argv['f']), async node => {
+  Promise.map(readNodesFromFile(argv.f), async node => {
     try {
-      let time = await getPingTime(node)
+      let time = await getPingTime({node, count: argv.n})
 
       // console.log(node, time)
 
@@ -56,7 +55,7 @@ function main () {
     } catch (err) {
       console.log(red(err))
     }
-  }).then(() => {
+  }, {concurrency: argv.c}).then(() => {
     let items = _.sortBy(nodeTimes, 'time')
 
     console.log(green('\nNodes sorted by mean ping time:'))
