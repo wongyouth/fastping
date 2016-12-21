@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel fastping.js -o dist/fastping.js"
   },
-  "homepage": "https://github.com/wongyouth/fastping",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wongyouth/fastping"
+  },
   "keywords": [
     "vpn",
     "server",
