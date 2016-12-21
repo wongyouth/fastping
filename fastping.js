@@ -15,24 +15,21 @@ const argv    = require('yargs')
   .alias('h', 'help')
   .argv
 
-// get server list
-// $('td').map((_, x) => /talkcute.com/.test(x.textContent) ? x.textContent.trim() : null).get()
-
 // s => [s]
 const readNodesFromFile = file =>
-  fs.readFileSync(file).toString().split('\n').filter(x => x.trim().length != 0)
+  fs.readFileSync(file)
+    .toString()
+    .split('\n')
+    .filter(x => x.trim().length != 0)
 
 // s => Promise(i)
-const getPingTime = async ({node, count}) => {
-  let output = await exec(`ping -c ${count} ${node}`)
-  // console.log(output)
-  let times = output
+const getPingTime = async ({node, count}) =>
+  _(await exec(`ping -c ${count} ${node}`))
+    // .tap(console.log)
     .split('\n')
     .filter(x => /time=(.*) ms/.test(x))
     .map(x => +/time=(.*) ms/.exec(x)[1])
-
-  return _.mean(times)
-}
+    .mean()
 
 // s => s
 const red = o => chalk.red(o.toString())
@@ -53,16 +50,18 @@ function main () {
     } catch (err) {
       console.log(red(err))
     }
-  }, {concurrency: argv.c}).then((nodeTimes) => {
-    let items = _.sortBy(nodeTimes, 'time')
+  }, {concurrency: argv.c}).then(nodeTimes =>
+    _.chain(nodeTimes)
+      .sortBy(x => x.time)
+      .tap(_ => console.log(green('Nodes sorted by mean ping time:')))
+      .tap(items => items.forEach(({node, time}, index) =>
+        console.log(_.padEnd(`${index + 1}.`, 4), _.padEnd(`${node}`, 20), `${time} ms`)))
+      .head()
+      .tap(item =>
+        console.log(green(`The fastest node: ${item.node}, mean ping time: ${item.time} ms`)))
+      .value()
 
-    console.log(green('Nodes sorted by mean ping time:'))
-    items.forEach(({node, time}, index) => {
-      console.log(_.padEnd(`${index + 1}.`, 4), _.padEnd(`${node}`, 20), `${time} ms`)
-    })
-
-    console.log(green(`The fastest node: ${items[0].node}, mean ping time: ${items[0].time} ms`))
-  })
+  )
 }
 
 main()
