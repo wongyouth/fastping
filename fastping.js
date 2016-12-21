@@ -1,10 +1,9 @@
-#!/usr/bin/env node
-
 const fs      = require('fs')
 const _       = require('lodash')
 const chalk   = require('chalk')
 const Promise = require('bluebird')
 const exec    = Promise.promisify(require('child_process').exec)
+const argv    = require('minimist')(process.argv.slice(1))
 
 // get server list
 // $('td').map((_, x) => /talkcute.com/.test(x.textContent) ? x.textContent.trim() : null).get()
@@ -30,14 +29,25 @@ const red = o => chalk.red(o.toString())
 // s => s
 const green = o => chalk.green(o.toString())
 
+function checkArguments () {
+  let file = argv['f']
+
+  if (!file || !fs.existsSync(file)) {
+    console.log('Usage: fastping -f file')
+    process.exit(1)
+  }
+}
+
 function main () {
+  checkArguments()
+
   let nodeTimes = []
 
-  Promise.map(readNodesFromFile('nodes'), async node => {
+  Promise.map(readNodesFromFile(argv['f']), async node => {
     try {
       let time = await getPingTime(node)
 
-      console.log(node, time)
+      // console.log(node, time)
 
       nodeTimes.push({
         node,
@@ -47,12 +57,14 @@ function main () {
       console.log(red(err))
     }
   }).then(() => {
-    var items = _.sortBy(nodeTimes, 'time')
+    let items = _.sortBy(nodeTimes, 'time')
 
-    console.log('\nNodes sorted by ping time:')
-    console.log(items)
+    console.log(green('\nNodes sorted by mean ping time:'))
+    items.forEach(({node, time}, index) => {
+      console.log(`${index+1}. ${node}: ${time} ms`)
+    })
 
-    console.log(green(`The fastest node: ${items[0].node}, ping time: ${items[0].time} ms`))
+    console.log(green(`The fastest node: ${items[0].node}, mean ping time: ${items[0].time} ms`))
   })
 }
 
