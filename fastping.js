@@ -40,22 +40,20 @@ const red = o => chalk.red(o.toString())
 const green = o => chalk.green(o.toString())
 
 function main () {
-  let nodeTimes = []
-
   Promise.map(readNodesFromFile(argv.f), async node => {
     try {
       let time = await getPingTime({node, count: argv.n})
 
       // console.log(node, time)
 
-      nodeTimes.push({
+      return {
         node,
         time
-      })
+      }
     } catch (err) {
       console.log(red(err))
     }
-  }, {concurrency: argv.c}).then(() => {
+  }, {concurrency: argv.c}).then((nodeTimes) => {
     let items = _.sortBy(nodeTimes, 'time')
 
     console.log(green('\nNodes sorted by mean ping time:'))
