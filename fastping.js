@@ -36,32 +36,29 @@ const red = o => chalk.red(o.toString())
 // s => s
 const green = o => chalk.green(o.toString())
 
-function main () {
-  Promise.map(readNodesFromFile(argv.f), async node => {
-    try {
-      let time = await getPingTime({node, count: argv.n})
+// start
+Promise.map(readNodesFromFile(argv.f), async node => {
+  try {
+    let time = await getPingTime({node, count: argv.n})
 
-      // console.log(node, time)
+    // console.log(node, time)
 
-      return {
-        node,
-        time
-      }
-    } catch (err) {
-      console.log(red(err))
+    return {
+      node,
+      time
     }
-  }, {concurrency: argv.c}).then(nodeTimes =>
-    _.chain(nodeTimes)
-      .sortBy(x => x.time)
-      .tap(_ => console.log(green('Nodes sorted by mean ping time:')))
-      .tap(items => items.forEach(({node, time}, index) =>
-        console.log(_.padEnd(`${index + 1}.`, 4), _.padEnd(`${node}`, 20), `${time} ms`)))
-      .head()
-      .tap(item =>
-        console.log(green(`The fastest node: ${item.node}, mean ping time: ${item.time} ms`)))
-      .value()
+  } catch (err) {
+    console.log(red(err))
+  }
+}, {concurrency: argv.c}).then(nodeTimes =>
+  _.chain(nodeTimes)
+    .sortBy(x => x.time)
+    .tap(_ => console.log(green('Nodes sorted by mean ping time:')))
+    .tap(items => items.forEach(({node, time}, index) =>
+      console.log(_.padEnd(`${index + 1}.`, 4), _.padEnd(`${node}`, 20), `${time} ms`)))
+    .head()
+    .tap(item =>
+      console.log(green(`The fastest node: ${item.node}, mean ping time: ${item.time} ms`)))
+    .value()
+)
 
-  )
-}
-
-main()
