@@ -20,7 +20,7 @@ const argv    = require('yargs')
 
 // s => [s]
 const readNodesFromFile = file =>
-  fs.readFileSync(file).toString().split('\n').filter(x => /.com/.test(x))
+  fs.readFileSync(file).toString().split('\n').filter(x => x.trim().length != 0)
 
 // s => Promise(i)
 const getPingTime = async ({node, count}) => {
@@ -56,9 +56,9 @@ function main () {
   }, {concurrency: argv.c}).then((nodeTimes) => {
     let items = _.sortBy(nodeTimes, 'time')
 
-    console.log(green('\nNodes sorted by mean ping time:'))
+    console.log(green('Nodes sorted by mean ping time:'))
     items.forEach(({node, time}, index) => {
-      console.log(`${index + 1}. ${node}: ${time} ms`)
+      console.log(_.padEnd(`${index + 1}.`, 4), _.padEnd(`${node}`, 20), `${time} ms`)
     })
 
     console.log(green(`The fastest node: ${items[0].node}, mean ping time: ${items[0].time} ms`))
