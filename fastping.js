@@ -27,7 +27,7 @@ const getPingTime = async ({node, count}) => {
   let output = await exec(`ping -c ${count} ${node}`)
   // console.log(output)
   let times = output
-    .split("\n")
+    .split('\n')
     .filter(x => /time=(.*) ms/.test(x))
     .map(x => +/time=(.*) ms/.exec(x)[1])
 
@@ -60,7 +60,7 @@ function main () {
 
     console.log(green('\nNodes sorted by mean ping time:'))
     items.forEach(({node, time}, index) => {
-      console.log(`${index+1}. ${node}: ${time} ms`)
+      console.log(`${index + 1}. ${node}: ${time} ms`)
     })
 
     console.log(green(`The fastest node: ${items[0].node}, mean ping time: ${items[0].time} ms`))
