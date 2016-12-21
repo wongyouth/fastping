@@ -11,8 +11,8 @@ After all nodes have pinged. fastping will give you the fastest node and the mea
 
     Options:
       -f, --file  Nodes file to load                                      [required]
-      -n          Number of requests to perform                         [default: 3]
-      -c          Concurrency, number of multiple requests to make at a time
+      -n          Number of ping requests to perform for a single node  [default: 3]
+      -c          Concurrency, number of multiple ping requests to make at a time
                                                                         [default: 0]
       -h, --help  Show help                                                [boolean]
 
