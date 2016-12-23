@@ -1,5 +1,7 @@
 # fastping
 
+[![NPM](https://nodei.co/npm/fastping.png)](https://nodei.co/npm/fastping/)
+
 A tool to find the fastest node from candidates by ping time
 
 List all nodes in a file line by line, and `fastping` will ping every node 3 times to get a mean ping time.
