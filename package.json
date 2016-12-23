@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "mkdir dist",
+    "prepare": "mkdir -p dist",
     "compile": "babel fastping.js -o dist/fastping.js",
     "build": "npm run prepare && npm run compile"
   },
