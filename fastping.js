@@ -52,6 +52,7 @@ Promise.map(readNodesFromFile(argv.f), async node => {
   }
 }, {concurrency: argv.c}).then(nodeTimes =>
   _.chain(nodeTimes)
+    .compact() // filters errred node
     .sortBy(x => x.time)
     .tap(_ => console.log(green('Nodes sorted by mean ping time:')))
     .tap(items => items.forEach(({node, time}, index) =>

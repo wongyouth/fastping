@@ -1,11 +1,13 @@
 {
   "name": "fastping",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Find the fastest server by mean ping time",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel fastping.js -o dist/fastping.js"
+    "prepare": "mkdir dist",
+    "compile": "babel fastping.js -o dist/fastping.js",
+    "build": "npm run prepare && npm run compile"
   },
   "repository": {
     "type": "git",
